@@ -1,4 +1,7 @@
 from random import random
+from time import time
+
+start = time()
 
 nums = []
 
@@ -13,3 +16,4 @@ def bubble_sort(arr):
     return arr
 
 print bubble_sort(nums)
+print 'Executed in ',time()-start,'seconds'
