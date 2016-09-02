@@ -1,6 +1,6 @@
 from random import random
 
-class PriorityQueue(): #implemented using max-heap; all nodes are greater than or equal to children
+class PriorityQueue(object): #implemented using max-heap; all nodes are greater than or equal to children
     arr = None
 
     def __init__(self, arr):
@@ -18,10 +18,10 @@ class PriorityQueue(): #implemented using max-heap; all nodes are greater than o
             else:
                 break
 
-    def __heapify_down(self, arr):
+    def __heapify_down(self, arr, n):
         i = 0
         while True:
-            if 2*i+1 < len(arr):
+            if 2*i+1 < n:
                 left = 2*i+1
                 right = 2*i+2
                 if arr[i] > max(arr[left],arr[right]):
@@ -66,10 +66,23 @@ class PriorityQueue(): #implemented using max-heap; all nodes are greater than o
         val = self.arr[0]
         (self.arr[-1],self.arr[0]) = (self.arr[0],self.arr[-1])
         self.arr = self.arr[:-1]
-        self.__heapify_down(self.arr)
+        self.__heapify_down(self.arr, len(self.arr))
         return val
 
+    def heapsort(self):
+        arr = self.arr
+        for i in range(len(arr)-1, 0, -1):
+            (arr[i],arr[0]) = (arr[0],arr[i])
+            self.__heapify_down(arr, i-1)
+        return arr
 
+    def heapify(self):
+        for i in range(1, len(self.arr)):
+            self.__heapify_up(self.arr, i)
+        return self.arr
+
+
+'''
 nums = []
 
 for i in range(15):
@@ -79,11 +92,13 @@ nums.append(100)
 print nums
 
 pq = PriorityQueue(nums)
-print pq.get_array()
-pq.print_tree()
 
 pq.push(25)
 pq.push(205)
+
+print pq.get_array()
+print pq.heapsort()
+print pq.heapify()
 
 print pq.get_array()
 pq.print_tree()
@@ -92,3 +107,4 @@ print 'popped:',pq.pop()
 
 print pq.get_array()
 pq.print_tree()
+'''
