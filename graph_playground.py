@@ -16,6 +16,17 @@ def get_manhattan_distance(point1, point2): #expected tuples
     return abs(point1[0]-point2[0])+abs(point1[1]-point2[1])
 
 
+def calculate_heuristics(grid, origin):
+    heuristics = []
+    for j,row in enumerate(grid):
+        heuristics.append([])
+        for i,col in enumerate(grid[j]):
+            if grid[j][i] in [1,2,6]:
+                heuristics[j].append(get_manhattan_distance((j,i),origin))
+            else:
+                heuristics[j].append(0)
+    return heuristics
+
 stage0 = [
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         [0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0],
@@ -74,26 +85,16 @@ for j,row in enumerate(stage0):
         else:
             stage0_edges[j].append(0)
 
-stage0_heuristics = []
-origin = (0,0)
+stage0_heuristics = calculate_heuristics(stage0, (0, 0))
+movement_cost  = 10 # G in A* algorithm
+
+g = Graph()
+
 for j,row in enumerate(stage0):
-    stage0_heuristics.append([])
     for i,col in enumerate(stage0[j]):
         if stage0[j][i] in [1,2,6]:
-            stage0_heuristics[j].append(get_manhattan_distance((j,i),origin))
-        else:
-            stage0_heuristics[j].append(0)
+            g.add_vertex((j, i), stage0_heuristics[j][i])
+            map(lambda n: g.add_edge((j, i), n), get_neighbors(stage0, j, i)) #wordy, but basically for each neighbor return in get_neighbors, we add it as an edge using add_edge method of the graph object
 
-'''
-g = Graph()
-g.add_vertex((0,0))
-g.add_vertex((0,1))
-
-g.add_edge((0,0), (0,1))
-
-
-print get_neighbors(stage0,0,0)
-print get_neighbors(stage0,1,1)
-print get_neighbors(stage0,4,1)
-print get_neighbors(stage0,23,13)
-'''
+#use priority queue to keep track of lowest F cost; F = G+H
+#import ipdb; ipdb.set_trace()
