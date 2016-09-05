@@ -12,6 +12,10 @@ def get_neighbors(grid, y, x): #TODO: delete
         neighbors.append((y,x-1))
     return neighbors
 
+def get_manhattan_distance(point1, point2): #expected tuples
+    return abs(point1[0]-point2[0])+abs(point1[1]-point2[1])
+
+
 stage0 = [
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         [0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0],
@@ -60,15 +64,25 @@ stage0 = [
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         ]
 
-stage1 = []
+stage0_edges = []
 
 for j,row in enumerate(stage0):
-    stage1.append([])
+    stage0_edges.append([])
     for i,col in enumerate(stage0[j]):
         if stage0[j][i] in [1,2,6]:
-            stage1[j].append(get_neighbors(stage0,j,i))
+            stage0_edges[j].append(get_neighbors(stage0,j,i))
         else:
-            stage1[j].append(0)
+            stage0_edges[j].append(0)
+
+stage0_heuristics = []
+origin = (0,0)
+for j,row in enumerate(stage0):
+    stage0_heuristics.append([])
+    for i,col in enumerate(stage0[j]):
+        if stage0[j][i] in [1,2,6]:
+            stage0_heuristics[j].append(get_manhattan_distance((j,i),origin))
+        else:
+            stage0_heuristics[j].append(0)
 
 '''
 g = Graph()
