@@ -70,7 +70,6 @@ for j,row in enumerate(stage0):
         else:
             stage1[j].append(0)
 
-import ipdb; ipdb.set_trace()
 '''
 g = Graph()
 g.add_vertex((0,0))
