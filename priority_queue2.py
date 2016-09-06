@@ -1,6 +1,6 @@
 from random import random
 
-class PriorityQueue(object): #implemented using max-heap; all nodes are greater than or equal to children
+class PriorityQueue(object): #implemented using min-heap; all nodes are greater than or equal to children
     arr = None
 
     def __init__(self, arr):
@@ -8,10 +8,10 @@ class PriorityQueue(object): #implemented using max-heap; all nodes are greater 
         for i in range(1, len(self.arr)):
             self.__heapify_up(self.arr, i)
 
-    def __heapify_up(self, arr, n): #take element at end of list with length n and heapify it upwards until less than parent
+    def __heapify_up(self, arr, n): #take element at end of list with length n and heapify it upwards until greater than parent
         i = n
         while True:
-            if i > 0 and arr[i] > arr[(i-1)/2]: #if node is greater than parent
+            if i > 0 and arr[i] < arr[(i-1)/2]: #if node is less than parent
                 parent = (i-1)/2
                 (arr[parent],arr[i]) = (arr[i],arr[parent]) #swap
                 i = parent
@@ -24,10 +24,10 @@ class PriorityQueue(object): #implemented using max-heap; all nodes are greater 
             if 2*i+1 < n:
                 left = 2*i+1
                 right = 2*i+2
-                if arr[i] > max(arr[left],arr[right]):
+                if arr[i] < min(arr[left],arr[right]):
                     break
                 else:
-                    if arr[left] >= arr[right]:
+                    if arr[left] <= arr[right]:
                         (arr[i],arr[left]) = (arr[left],arr[i]) #swap parent with left child
                         i = left
                     else:
