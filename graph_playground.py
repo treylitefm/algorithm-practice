@@ -1,4 +1,5 @@
 from graph import Graph
+from priority_queue2 import PriorityQueue
 
 def get_neighbors(grid, y, x): #TODO: delete
     neighbors = []
@@ -15,7 +16,6 @@ def get_neighbors(grid, y, x): #TODO: delete
 def get_manhattan_distance(point1, point2): #expected tuples
     return abs(point1[0]-point2[0])+abs(point1[1]-point2[1])
 
-
 def calculate_heuristics(grid, origin):
     heuristics = []
     for j,row in enumerate(grid):
@@ -26,6 +26,9 @@ def calculate_heuristics(grid, origin):
             else:
                 heuristics[j].append(0)
     return heuristics
+
+def calculate_f_cost(g, vertex_dest, vertex_origin_movement_cost): #need origin and dest because G (movement cost) can change depending on where you're coming from
+    return vertex_origin_movement_cost + 10 + g.get_vertex_value(vertex_dest) #G+H
 
 stage0 = [
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -75,6 +78,9 @@ stage0 = [
         [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         ]
 
+origin = (1, 1)
+destination = (5, 5)
+
 stage0_edges = []
 
 for j,row in enumerate(stage0):
@@ -85,16 +91,32 @@ for j,row in enumerate(stage0):
         else:
             stage0_edges[j].append(0)
 
-stage0_heuristics = calculate_heuristics(stage0, (0, 0))
-movement_cost  = 10 # G in A* algorithm
+stage0_heuristics = calculate_heuristics(stage0, origin)
 
 g = Graph()
 
+#add calculated heuristics to graph
 for j,row in enumerate(stage0):
     for i,col in enumerate(stage0[j]):
         if stage0[j][i] in [1,2,6]:
             g.add_vertex((j, i), stage0_heuristics[j][i])
             map(lambda n: g.add_edge((j, i), n), get_neighbors(stage0, j, i)) #wordy, but basically for each neighbor return in get_neighbors, we add it as an edge using add_edge method of the graph object
+
+movement_costs = { 0: origin }#keep all movement costs outside of graph because its easier to update; key is the f cost, value is composed of all vertices that map to a particular f cost
+vertex = origin
+pq = PriorityQueue([])
+
+while True: #shall we tackle bfs with recursion? :(
+    if vertex is destination:
+        break
+    for neighbor in get_neighbors(vertex):
+        f_cost = calculate_f_cost(g, neighbor, vertex_f_cost - g.get_vertex_value(vertex)) #gross and cryptic; TODO: refactor once it works
+        pq.push(f_cost)
+        if movement_costs[f_cost] is None: movement_costs[f_cost] = []
+        movement_costs[f_cost].append(neighbor)
+    vertex_f_cost = pq.pop()
+    vertex = movement_costs[vertex_f_cost].pop() #gross and cryptic; TODO: refactor once it works
+
 
 #use priority queue to keep track of lowest F cost; F = G+H
 #import ipdb; ipdb.set_trace()
